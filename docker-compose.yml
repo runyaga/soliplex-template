@@ -54,7 +54,7 @@ services:
         target: "/db"
 
     ports:
-      - "8000:8000"
+      - "8080:8000"
 
     # Temporary: run with '--no-auth-mode'
     command: "/app/.venv/bin/soliplex-cli serve --no-auth-mode --reload=config --host=0.0.0.0 --proxy-headers --forwarded-allow-ips=* /environment"
@@ -159,7 +159,7 @@ services:
       - source: ingestion_db_password
       - source: postgres_password
     ports:
-      - "5432:5432"
+      - "5433:5432"
 
 volumes:
   postgres_data:
