@@ -64,7 +64,7 @@ services:
     image: ghcr.io/ggozad/haiku.rag-slim:latest
 
     build:
-      context: haiku-rag
+      context: haiku.rag
       dockerfile: Dockerfile
 
     ports:

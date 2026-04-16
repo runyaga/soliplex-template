@@ -22,6 +22,7 @@ RUN \
     uv init --bare --name "soliplex-template" --no-description && \
     uv add \
       soliplex \
+      "haiku.rag-slim" \
       psycopg[binary] \
       asyncpg \
       textual \
