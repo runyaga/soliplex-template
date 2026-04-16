@@ -1,6 +1,9 @@
 # Docker secrets
 .secrets/
 
+# Local port/config overrides (machine-specific)
+docker-compose.override.yml
+
 #Python
 *.pyc
 .coverage
