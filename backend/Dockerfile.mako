@@ -22,10 +22,11 @@ ENV UV_COMPILE_BYTECODE=1 \
 
 # 'bwrap' for the 'bubble-sandbox' skill. Running code also needs the
 # backend's 'security_opt' in docker-compose.yml (generator: enable_sandbox).
+# 'git' for a skills reconciler that shares this image.
 RUN \
   apt-get update && \
   apt-get install -y --no-install-recommends \
-    bubblewrap && \
+    bubblewrap git && \
     rm -rf /var/lib/apt/lists/*
 
 # Extra PyPI dependencies for this stack, one requirement per line (see
@@ -47,6 +48,20 @@ RUN --mount=from=uv,source=/uv,target=/usr/local/bin/uv \
       uv pip install --python /app/.venv/bin/python \
         --constraints /tmp/base-constraints.txt \
         --requirements /tmp/requirements.txt; \
+    fi
+
+# Local wheels (for example soliplex or soliplex-concierge built from a fork
+# branch) replace the image's copies. '--no-deps' keeps the release image's
+# pins and 'uv pip check' fails the build when a wheel needs a version the
+# image does not have. Skipped when 'wheels/' holds no wheel.
+COPY --link wheels /tmp/wheels
+
+RUN --mount=from=uv,source=/uv,target=/usr/local/bin/uv \
+    --mount=type=cache,target=/root/.cache/uv \
+    if ls /tmp/wheels/*.whl >/dev/null 2>&1; then \
+      uv pip install --python /app/.venv/bin/python --no-deps --reinstall \
+        /tmp/wheels/*.whl && \
+      uv pip check --python /app/.venv/bin/python; \
     fi
 
 # Bootstrap sandbox environments
